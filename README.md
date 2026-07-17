@@ -63,6 +63,7 @@ Frontend packages are installed automatically from `package.json`.
 2. Install dependencies:
    ```bash
    npm install
+   npm install vue-router@4   
    ```
 
 3. Start the Vue development server:
