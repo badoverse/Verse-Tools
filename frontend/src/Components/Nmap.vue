@@ -88,8 +88,7 @@ async function copyInstallCommand() {
         <span class="hero-badge">📡 Nmap</span>
         <h1 class="hero-title">Nmap Command Builder</h1>
         <p class="hero-subtitle">
-          Fill in your target and options below to generate a ready-to-run
-          Nmap command.
+          See them open ports!
         </p>
       </header>
 
@@ -321,8 +320,6 @@ async function copyInstallCommand() {
   line-height: 1.6;
 }
 
-/* ---------- Step layout ---------- */
-
 .steps {
   position: relative;
   display: flex;
@@ -395,7 +392,6 @@ async function copyInstallCommand() {
   letter-spacing: -0.01em;
 }
 
-/* ---------- Install card ---------- */
 
 .install-card-head {
   display: flex;
@@ -494,7 +490,6 @@ async function copyInstallCommand() {
   line-height: 1.5;
 }
 
-/* ---------- Form ---------- */
 
 .form {
   display: flex;
@@ -654,7 +649,6 @@ select {
   line-height: 1.6;
 }
 
-/* ---------- Transitions & keyframes ---------- */
 
 .pop-enter-active {
   transition: opacity 0.35s ease, transform 0.35s ease;

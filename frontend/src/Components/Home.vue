@@ -110,12 +110,11 @@ function goToCommand(cmd) {
     <footer class="footer">
       <div class="footer-divider"></div>
       <p class="footer-text">
-        Built by <span class="footer-author">Your Name</span>
+        Built by <span class="footer-author">badoVerse</span>
       </p>
       <div class="footer-links">
-        <!-- Replace href values with your real profiles -->
         <a
-          href="https://github.com/your-username"
+          href="https://github.com/badoverse"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
@@ -125,38 +124,12 @@ function goToCommand(cmd) {
           </svg>
           <span>GitHub</span>
         </a>
-        <a
-          href="https://linkedin.com/in/your-username"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45Z"/>
-          </svg>
-          <span>LinkedIn</span>
-        </a>
-        <a
-          href="https://your-portfolio.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Portfolio"
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
-            <circle cx="12" cy="12" r="9.5"/>
-            <path d="M2.5 12h19M12 2.5c2.4 2.6 3.7 6 3.7 9.5s-1.3 6.9-3.7 9.5c-2.4-2.6-3.7-6-3.7-9.5s1.3-6.9 3.7-9.5Z"/>
-          </svg>
-          <span>Portfolio</span>
-        </a>
       </div>
     </footer>
   </div>
 </template>
 
 <style scoped>
-/* Kills the white corners: by default html/body keep an 8px margin and a
-   white background, which peeks out around .page since it only fills
-   its own content box. Resetting the root elements removes that gap. */
 :global(html),
 :global(body),
 :global(#app) {
@@ -253,7 +226,6 @@ function goToCommand(cmd) {
   margin: 0;
 }
 
-/* Fade + slight vertical drift as phrases swap, instead of an instant cut */
 .phrase-enter-active,
 .phrase-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;

@@ -1,7 +1,7 @@
 const BASE_URL = "http://localhost:8000/api";
 
-export async function generateNmapCommand(payload) {
-  const res = await fetch(`${BASE_URL}/commands/nmap`, {
+async function postCommand(path, payload) {
+  const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -12,5 +12,13 @@ export async function generateNmapCommand(payload) {
     throw new Error(error.detail || "Failed to generate command");
   }
 
-  return res.json();
+  return res.json(); 
+}
+
+export function generateNmapCommand(payload) {
+  return postCommand("/commands/nmap", payload);
+}
+
+export function generateCurlCommand(payload) {
+  return postCommand("/commands/curl", payload);
 }
