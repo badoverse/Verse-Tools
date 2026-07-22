@@ -12,7 +12,7 @@ async function postCommand(path, payload) {
     throw new Error(error.detail || "Failed to generate command");
   }
 
-  return res.json(); 
+  return res.json();
 }
 
 export function generateNmapCommand(payload) {
@@ -21,4 +21,8 @@ export function generateNmapCommand(payload) {
 
 export function generateCurlCommand(payload) {
   return postCommand("/commands/curl", payload);
+}
+
+export function generateGobusterCommand(payload) {
+  return postCommand("/commands/gobuster", payload);
 }
