@@ -306,3 +306,137 @@ def generate_gobuster_command(req: GobusterRequest):
         parts += ["-o", req.output_file]
 
     return {"command": " ".join(parts)}
+
+# ---------------------------------------------------------------------------
+# Hydra
+# ---------------------------------------------------------------------------
+
+VALID_OUTPUT_FORMATS = {"text", "json", "jsonv1"}
+
+
+class HydraRequest(BaseModel):
+    target: str
+    service: str                          # ssh, ftp, http-get, http-post-form, etc.
+    port: Optional[int] = None            # -s
+    ssl: bool = False                     # -S
+
+    # Credentials — either single values, wordlists, or a combo file
+    login: Optional[str] = None           # -l
+    login_list: Optional[str] = None      # -L file
+    password: Optional[str] = None        # -p
+    password_list: Optional[str] = None   # -P file
+    combo_file: Optional[str] = None      # -C file (login:pass pairs, overrides -l/-L/-p/-P)
+
+    # -e flags
+    try_empty_password: bool = False      # -e n
+    try_login_as_password: bool = False   # -e s
+    try_reversed_login: bool = False      # -e r
+    loop_around_users: bool = False       # -u
+
+    # Performance
+    tasks: Optional[int] = None           # -t
+    wait_time: Optional[int] = None       # -w
+    wait_time_per_thread: Optional[int] = None  # -W
+
+    # Behaviour
+    exit_on_first_found: bool = False           # -f
+    exit_on_first_found_per_host: bool = False   # -F
+    verbose: bool = False                 # -v
+    debug: bool = False                   # -d
+    quiet: bool = False                   # -q
+    restore_session: bool = False         # -R
+    ignore_restore_file: bool = False     # -I
+
+    # Output
+    output_file: Optional[str] = None     # -o
+    output_format: Optional[str] = None   # -b
+
+    # Module-specific extra args, e.g. http-post-form:
+    # "/login:user=^USER^&pass=^PASS^:F=incorrect"
+    module_options: Optional[str] = None
+
+
+@app.post("/api/commands/hydra")
+def generate_hydra_command(req: HydraRequest):
+    if not req.target:
+        raise HTTPException(status_code=400, detail="Target is required")
+    if not req.service:
+        raise HTTPException(status_code=400, detail="Service is required")
+
+    if req.output_format and req.output_format not in VALID_OUTPUT_FORMATS:
+        raise HTTPException(status_code=400, detail=f"Unsupported output format: {req.output_format}")
+
+    if not req.combo_file:
+        if not (req.login or req.login_list):
+            raise HTTPException(status_code=400, detail="Provide a login (-l), login list (-L), or combo file (-C)")
+        if not (req.password or req.password_list):
+            raise HTTPException(status_code=400, detail="Provide a password (-p), password list (-P), or combo file (-C)")
+
+    parts = ["hydra"]
+
+    if req.combo_file:
+        parts += ["-C", req.combo_file]
+    else:
+        if req.login:
+            parts += ["-l", req.login]
+        elif req.login_list:
+            parts += ["-L", req.login_list]
+
+        if req.password:
+            parts += ["-p", req.password]
+        elif req.password_list:
+            parts += ["-P", req.password_list]
+
+    e_flags = ""
+    if req.try_empty_password:
+        e_flags += "n"
+    if req.try_login_as_password:
+        e_flags += "s"
+    if req.try_reversed_login:
+        e_flags += "r"
+    if e_flags:
+        parts += ["-e", e_flags]
+
+    if req.loop_around_users:
+        parts.append("-u")
+
+    if req.tasks is not None:
+        parts += ["-t", str(req.tasks)]
+    if req.wait_time is not None:
+        parts += ["-w", str(req.wait_time)]
+    if req.wait_time_per_thread is not None:
+        parts += ["-W", str(req.wait_time_per_thread)]
+
+    if req.exit_on_first_found:
+        parts.append("-f")
+    if req.exit_on_first_found_per_host:
+        parts.append("-F")
+
+    if req.verbose:
+        parts.append("-v")
+    if req.debug:
+        parts.append("-d")
+    if req.quiet:
+        parts.append("-q")
+    if req.restore_session:
+        parts.append("-R")
+    if req.ignore_restore_file:
+        parts.append("-I")
+
+    if req.output_file:
+        parts += ["-o", req.output_file]
+        if req.output_format:
+            parts += ["-b", req.output_format]
+
+    if req.ssl:
+        parts.append("-S")
+    if req.port is not None:
+        parts += ["-s", str(req.port)]
+
+    parts.append(req.target)
+    parts.append(req.service)
+
+    if req.module_options:
+        parts.append(req.module_options)
+
+    return {"command": " ".join(parts)}
