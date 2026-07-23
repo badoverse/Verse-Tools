@@ -29,3 +29,7 @@ export function generateGobusterCommand(payload) {
 export function generateHydraCommand(payload) {
   return postCommand("/commands/hydra", payload);
 }
+
+export function generateSqlmapCommand(payload) {
+  return postCommand("/commands/sqlmap", payload);
+}

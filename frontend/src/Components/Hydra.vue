@@ -161,7 +161,7 @@ async function copyInstallCommand() {
         <span class="hero-badge">🔑 Hydra</span>
         <h1 class="hero-title">Hydra Command Builder</h1>
         <p class="hero-subtitle">
-          Only run this against systems you're authorized to test.
+            Wish I could brute force myself into a relationship
         </p>
       </header>
 
@@ -291,14 +291,13 @@ async function copyInstallCommand() {
                 </div>
               </div>
 
-              <!-- Module options for form-based services -->
               <div v-if="showModuleOptions" class="field">
                 <label for="moduleOptions">Module options</label>
                 <input
                   id="moduleOptions"
                   v-model="moduleOptions"
                   type="text"
-                  placeholder="/login:user=^USER^&pass=^PASS^:F=incorrect"
+                  placeholder="/login:user=^USER^&pass=^PASS^&Login=Login:F=incorrect"
                 />
               </div>
 

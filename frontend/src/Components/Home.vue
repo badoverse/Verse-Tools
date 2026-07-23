@@ -5,11 +5,11 @@ import CommandCard from "./CommandCard.vue";
 
 const router = useRouter();
 
-
 const phrases = [
   "Pick a tool n get to work.",
   "No cheat sheets. No guesswork. Just the right commands.",
-  "Install the tools locally on your PC before executing any command.",
+  "Install the tools locally on your PC where required before executing any command.",
+  "For a pen tester, by a pen tester",
   "Also try Minecraft!",
 ];
 
@@ -79,7 +79,8 @@ function goToCommand(cmd) {
 }
 </script>
 
-<template>
+<template>    
+
   <div class="page">
     <div class="ambient-glow glow-one"></div>
     <div class="ambient-glow glow-two"></div>

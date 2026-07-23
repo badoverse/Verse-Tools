@@ -140,6 +140,7 @@ async function copyInstallCommand() {
 </script>
 
 <template>
+    
   <div class="page">
     <div class="ambient-glow glow-one"></div>
     <div class="ambient-glow glow-two"></div>
