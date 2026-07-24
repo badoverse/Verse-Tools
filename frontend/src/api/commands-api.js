@@ -1,9 +1,11 @@
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 async function postCommand(path, payload) {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(payload),
   });
 
@@ -15,22 +17,20 @@ async function postCommand(path, payload) {
   return res.json();
 }
 
-export function generateNmapCommand(payload) {
-  return postCommand("/commands/nmap", payload);
-}
+export const generateNmapCommand = (payload) =>
+  postCommand("/commands/nmap", payload);
 
-export function generateCurlCommand(payload) {
-  return postCommand("/commands/curl", payload);
-}
+export const generateCurlCommand = (payload) =>
+  postCommand("/commands/curl", payload);
 
-export function generateGobusterCommand(payload) {
-  return postCommand("/commands/gobuster", payload);
-}
+export const generateGobusterCommand = (payload) =>
+  postCommand("/commands/gobuster", payload);
 
-export function generateHydraCommand(payload) {
-  return postCommand("/commands/hydra", payload);
-}
+export const generateHydraCommand = (payload) =>
+  postCommand("/commands/hydra", payload);
 
-export function generateSqlmapCommand(payload) {
-  return postCommand("/commands/sqlmap", payload);
-}
+export const generateSqlmapCommand = (payload) =>
+  postCommand("/commands/sqlmap", payload);
+
+export const generateNiktoCommand = (payload) =>
+  postCommand("/commands/nikto", payload);
