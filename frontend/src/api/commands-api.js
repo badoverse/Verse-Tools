@@ -26,6 +26,7 @@ export function generateCurlCommand(payload) {
 export function generateGobusterCommand(payload) {
   return postCommand("/commands/gobuster", payload);
 }
+
 export function generateHydraCommand(payload) {
   return postCommand("/commands/hydra", payload);
 }

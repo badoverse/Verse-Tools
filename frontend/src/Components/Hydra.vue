@@ -39,6 +39,16 @@ const ignoreRestoreFile = ref(false);
 const outputFile = ref("");
 const outputFormat = ref("");
 
+// Structured http-post-form / https-post-form builder
+const formPath = ref("");
+const loginField = ref("username");
+const passwordField = ref("password");
+const extraFields = ref([]); // [{ name, value }]
+const conditionType = ref("F"); // "F" | "S"
+const conditionString = ref("");
+
+// Advanced escape hatch — used verbatim by the backend if present
+const showRawOverride = ref(false);
 const moduleOptions = ref("");
 
 const command = ref("");
@@ -80,6 +90,33 @@ const showModuleOptions = computed(() =>
   service.value.endsWith("-form")
 );
 
+// Live preview of the assembled module string, mirrors build_http_form_module_options
+const modulePreview = computed(() => {
+  if (moduleOptions.value.trim()) return moduleOptions.value.trim();
+  if (!formPath.value.trim()) return "";
+
+  const lf = loginField.value.trim() || "username";
+  const pf = passwordField.value.trim() || "password";
+
+  const bodyParts = [`${lf}=^USER^`, `${pf}=^PASS^`];
+  for (const f of extraFields.value) {
+    if (f.name.trim()) bodyParts.push(`${f.name.trim()}=${f.value.trim()}`);
+  }
+  const body = bodyParts.join("&");
+  const condition = `${conditionType.value}=${conditionString.value || ""}`;
+
+  const esc = (v) => v.replace(/:/g, "\\:");
+  return `${esc(formPath.value.trim())}:${esc(body)}:${esc(condition)}`;
+});
+
+function addExtraField() {
+  extraFields.value.push({ name: "", value: "" });
+}
+
+function removeExtraField(index) {
+  extraFields.value.splice(index, 1);
+}
+
 async function handleGenerate() {
   error.value = "";
   command.value = "";
@@ -117,6 +154,17 @@ async function handleGenerate() {
 
       output_file: outputFile.value || null,
       output_format: outputFormat.value || null,
+
+      form_path: showModuleOptions.value ? formPath.value || null : null,
+      login_field: loginField.value || "username",
+      password_field: passwordField.value || "password",
+      extra_fields: extraFields.value.some((f) => f.name.trim())
+        ? extraFields.value
+            .filter((f) => f.name.trim())
+            .map((f) => ({ name: f.name.trim(), value: f.value.trim() }))
+        : null,
+      condition_type: conditionType.value || "F",
+      condition_string: showModuleOptions.value ? conditionString.value || null : null,
 
       module_options: moduleOptions.value || null,
     };
@@ -161,7 +209,7 @@ async function copyInstallCommand() {
         <span class="hero-badge">🔑 Hydra</span>
         <h1 class="hero-title">Hydra Command Builder</h1>
         <p class="hero-subtitle">
-            Wish I could brute force myself into a relationship
+          password123 isn't going to crack itself.
         </p>
       </header>
 
@@ -291,14 +339,86 @@ async function copyInstallCommand() {
                 </div>
               </div>
 
-              <div v-if="showModuleOptions" class="field">
-                <label for="moduleOptions">Module options</label>
-                <input
-                  id="moduleOptions"
-                  v-model="moduleOptions"
-                  type="text"
-                  placeholder="/login:user=^USER^&pass=^PASS^&Login=Login:F=incorrect"
-                />
+              <!-- Structured form-module builder for http-post-form / https-post-form -->
+              <div v-if="showModuleOptions" class="field form-module">
+                <label>Form module ({{ service }})</label>
+                <p class="hint">
+                  The username/password above still supply <code>^USER^</code> / <code>^PASS^</code>, this section
+                  just describes the login form itself.
+                </p>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="formPath">Form path</label>
+                    <input id="formPath" v-model="formPath" type="text" placeholder="/login.php" />
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="loginField">Login field name</label>
+                    <input id="loginField" v-model="loginField" type="text" placeholder="username" />
+                  </div>
+                  <div class="field">
+                    <label for="passwordField">Password field name</label>
+                    <input id="passwordField" v-model="passwordField" type="text" placeholder="password" />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Extra form fields</label>
+                  <div class="extra-fields">
+                    <div v-for="(f, i) in extraFields" :key="i" class="extra-field-row">
+                      <input v-model="f.name" type="text" placeholder="field name" />
+                      <input v-model="f.value" type="text" placeholder="static value" />
+                      <button type="button" class="remove-btn" @click="removeExtraField(i)" aria-label="Remove field">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                  <button type="button" class="add-field-btn" @click="addExtraField">+ Add field</button>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label>Condition</label>
+                    <div class="pill-group">
+                      <button type="button" class="pill" :class="{ active: conditionType === 'F' }" @click="conditionType = 'F'">Failure (F=)</button>
+                      <button type="button" class="pill" :class="{ active: conditionType === 'S' }" @click="conditionType = 'S'">Success (S=)</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="conditionString">
+                    {{ conditionType === "F" ? "Text present on a failed login" : "Text present on a successful login" }}
+                  </label>
+                  <input
+                    id="conditionString"
+                    v-model="conditionString"
+                    type="text"
+                    :placeholder="conditionType === 'F' ? 'incorrect' : 'Welcome back'"
+                  />
+                </div>
+
+                <div v-if="modulePreview" class="module-preview">
+                  <span class="module-preview-label">Preview</span>
+                  <code>{{ modulePreview }}</code>
+                </div>
+
+                <button type="button" class="advanced-toggle" @click="showRawOverride = !showRawOverride">
+                  {{ showRawOverride ? "Hide" : "Show" }} raw override
+                </button>
+
+                <div v-if="showRawOverride" class="field">
+                  <label for="moduleOptions">Raw module string (overrides everything above)</label>
+                  <input
+                    id="moduleOptions"
+                    v-model="moduleOptions"
+                    type="text"
+                    placeholder="/login:user=^USER^&pass=^PASS^:F=incorrect"
+                  />
+                </div>
               </div>
 
               <!-- Performance -->
@@ -596,6 +716,99 @@ input:focus, select:focus, textarea:focus { border-color: rgba(34, 211, 238, 0.5
 
 .auth-row { display: flex; gap: 0.75rem; }
 
+/* Form-module builder */
+.form-module {
+  padding: 1.1rem 1.1rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(99, 102, 241, 0.04);
+  gap: 1rem;
+}
+.form-module > label:first-child { font-size: 0.85rem; }
+.hint {
+  margin: -0.4rem 0 0.2rem;
+  font-size: 0.78rem;
+  color: #8b93a3;
+  line-height: 1.5;
+}
+.hint code {
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  color: #a5b4fc;
+  background: rgba(165, 180, 252, 0.1);
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+}
+
+.extra-fields { display: flex; flex-direction: column; gap: 0.5rem; }
+.extra-field-row { display: flex; gap: 0.5rem; align-items: center; }
+.extra-field-row input { flex: 1; }
+.remove-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: #0a0b0e;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.remove-btn:hover { color: #fca5a5; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.06); }
+
+.add-field-btn {
+  align-self: flex-start;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px dashed rgba(165, 180, 252, 0.35);
+  background: transparent;
+  color: #a5b4fc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.add-field-btn:hover { border-color: rgba(165, 180, 252, 0.6); background: rgba(165, 180, 252, 0.06); }
+
+.module-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: #0a0b0e;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.module-preview-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+.module-preview code {
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: #67e8f9;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.advanced-toggle {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #8b93a3;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.advanced-toggle:hover { color: #22d3ee; }
+
 .generate-btn {
   display: flex;
   align-items: center;
@@ -670,7 +883,8 @@ input:focus, select:focus, textarea:focus { border-color: rgba(34, 211, 238, 0.5
   font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
   font-size: 0.88rem;
   color: #67e8f9;
-  word-break: break-all;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   line-height: 1.6;
 }
 
