@@ -183,7 +183,7 @@ async function copyInstallCommand() {
         <span class="hero-badge">🛡️ Nikto</span>
         <h1 class="hero-title">Nikto Command Builder</h1>
         <p class="hero-subtitle">
-          Scan web servers for known vulnerabilities and misconfigurations.
+          One of my favorites yet.
         </p>
       </header>
 

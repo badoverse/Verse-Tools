@@ -173,7 +173,7 @@ async function copyInstallCommand() {
         <span class="hero-badge">📡 Nmap</span>
         <h1 class="hero-title">Nmap Command Builder</h1>
         <p class="hero-subtitle">
-          Scan responsibly — only hosts you own or are authorized to test.
+          Scan responsibly ;)
         </p>
       </header>
 

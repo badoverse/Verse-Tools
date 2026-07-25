@@ -175,7 +175,7 @@ async function copyInstallCommand() {
         <span class="hero-badge">🗂️ Gobuster</span>
         <h1 class="hero-title">Gobuster Command Builder</h1>
         <p class="hero-subtitle">
-          Brute-force directories, DNS, vhosts and more.
+          We don't knock we Bust.
         </p>
       </header>
 
