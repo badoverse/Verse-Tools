@@ -1,22 +1,32 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
+const ALLOWED_BASE_URLS = [
+  import.meta.env.VITE_API_URL,
+  "http://localhost:8000/api",
+];
 
 async function postCommand(path, payload) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  for (const baseUrl of ALLOWED_BASE_URLS) {
+    if (!baseUrl) continue;
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error.detail || "Failed to generate command");
+    try {
+      const res = await fetch(`${baseUrl}${path}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        return res.json();
+      }
+    } catch (error) {
+      //try the next URL
+    }
   }
 
-  return res.json();
+  throw new Error("Failed to generate command");
 }
-
 export const generateNmapCommand = (payload) =>
   postCommand("/commands/nmap", payload);
 
