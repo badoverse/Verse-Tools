@@ -2,6 +2,7 @@
 const ALLOWED_BASE_URLS = [
   import.meta.env.VITE_API_URL,
   "http://localhost:8000/api",
+  "https://verse-tools-backend.onrender.com/api",
 ];
 
 async function postCommand(path, payload) {
