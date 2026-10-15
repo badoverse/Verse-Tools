@@ -1,0 +1,4 @@
+# SPA fallback: Cloudflare Pages serves real static assets first, then falls
+# back to index.html so vue-router history-mode deep links (e.g.
+# /commands/nmap) resolve on direct load / refresh.
+/*    /index.html    200

@@ -1,0 +1,8 @@
+name = "verse-tools-frontend"
+compatibility_date = "2025-11-02"
+pages_build_output_dir = "dist"
+
+# Deploy with:  npm run build  &&  npx wrangler pages deploy
+# Custom domain (tools.badoverse.space) is attached in the Cloudflare dashboard
+# under Workers & Pages > verse-tools-frontend > Custom domains, once the
+# badoverse.space zone is on Cloudflare.
