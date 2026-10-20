@@ -69,6 +69,13 @@ const commands = ref([
     icon: "🔑",
     route: "/commands/hydra",
   },
+  {
+    id: "wapiti",
+    title: "Wapiti",
+    description: "Audit web apps for vulns by fuzzing endpoints.",
+    icon: "🕷️",
+    route: "/commands/wapiti",
+  },
 ]);
 
 function goToCommand(cmd) {

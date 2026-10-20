@@ -47,3 +47,6 @@ export const generateSqlmapCommand = (payload) =>
 
 export const generateNiktoCommand = (payload) =>
   postCommand("/commands/nikto", payload);
+
+export const generateWapitiCommand = (payload) =>
+  postCommand("/commands/wapiti", payload);
