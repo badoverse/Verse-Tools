@@ -4,7 +4,6 @@ const ALLOWED_BASE_URLS = [
   "http://localhost:8000/api",
   "https://api.badoverse.space/api",
   "https://verse-tools-backend.broadnicegamerr.workers.dev/api",
-  "https://verse-tools-backend.onrender.com/api",
 ];
 
 async function postCommand(path, payload) {
