@@ -39,7 +39,7 @@ const tor = ref(false);
 const timeout = ref("");
 const userAgent = ref("");
 const headers = ref("");
-const verifySsl = ref(false);
+const verifySsl = ref(""); // "" = omit, "1" = verify on, "0" = verify off
 const headless = ref("");
 
 // Auth
@@ -163,7 +163,7 @@ async function handleGenerate() {
 
       headers: toLines(headers.value),
       user_agent: userAgent.value || null,
-      verify_ssl: verifySsl.value ? true : null,
+      verify_ssl: verifySsl.value === "" ? null : verifySsl.value === "1",
       headless: headless.value || null,
       timeout: timeout.value ? Number(timeout.value) : null,
 
@@ -414,11 +414,16 @@ async function copyInstallCommand() {
                 <textarea id="headers" v-model="headers" rows="2" placeholder="X-Forwarded-For: 127.0.0.1"></textarea>
               </div>
 
+              <div class="field">
+                <label for="verifySsl">Verify SSL certificates (--verify-ssl)</label>
+                <select id="verifySsl" v-model="verifySsl">
+                  <option value="">Default (wapiti decides)</option>
+                  <option value="1">On — verify (1)</option>
+                  <option value="0">Off — do not verify (0)</option>
+                </select>
+              </div>
+
               <div class="field checkbox-field">
-                <label class="checkbox">
-                  <input type="checkbox" v-model="verifySsl" />
-                  Verify SSL certificates (--verify-ssl 1)
-                </label>
                 <label class="checkbox">
                   <input type="checkbox" v-model="tor" />
                   Route through Tor (--tor)
