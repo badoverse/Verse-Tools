@@ -49,3 +49,6 @@ export const generateNiktoCommand = (payload) =>
 
 export const generateWapitiCommand = (payload) =>
   postCommand("/commands/wapiti", payload);
+
+export const generateNucleiCommand = (payload) =>
+  postCommand("/commands/nuclei", payload);

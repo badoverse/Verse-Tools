@@ -76,6 +76,13 @@ const commands = ref([
     icon: "🕷️",
     route: "/commands/wapiti",
   },
+  {
+    id: "nuclei",
+    title: "Nuclei",
+    description: "Scan targets with template-based vuln checks.",
+    icon: "☢️",
+    route: "/commands/nuclei",
+  },
 ]);
 
 function goToCommand(cmd) {

@@ -7,6 +7,7 @@ import CurlView from "../Components/Curl.vue";
 import SqlmapView from "../Components/Sqlmap.vue";
 import HydraView from "../Components/Hydra.vue";
 import WapitiView from "../Components/Wapiti.vue";
+import NucleiView from "../Components/Nuclei.vue";
 
 const routes = [
     { path: "/", name: "home", component: Home },
@@ -17,6 +18,7 @@ const routes = [
     { path: "/commands/sqlmap", name: "sqlmap", component: SqlmapView },
     { path: "/commands/hydra", name: "hydra", component: HydraView },
     { path: "/commands/wapiti", name: "wapiti", component: WapitiView },
+    { path: "/commands/nuclei", name: "nuclei", component: NucleiView },
 ];
 
 const router = createRouter({
